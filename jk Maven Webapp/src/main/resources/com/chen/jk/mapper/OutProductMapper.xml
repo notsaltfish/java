@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chen.jk.mapper.OutProductMapper">
+	<resultMap type="com.chen.jk.vo.OutProductVO" id="OutProductVORM">
+		<result property="customName" column="CUSTOM_NAME"/>
+		<result property="productNo" column="PRODUCT_NO"/>
+		<result property="cNumber" column="CNUMBER"/>
+		<result property="factoryName" column="FACTORY_NAME"/>
+		<result property="deliveryPeriod" column="DELIVERY_PERIOD"/>
+		<result property="exts" column="EXTS"/>
+		<result property="shipTime" column="SHIP_TIME"/>
+		<result property="tradeTerms" column="TRADE_TERMS"/>
+		<result property="contractNo" column="CONTRACT_NO"/>
+	</resultMap>
+	
+	<select id="find" parameterType="string" resultMap="OutProductVORM">
+		select c.CONTRACT_ID ,CUSTOM_NAME,to_char(SHIP_TIME,'yyyy-MM-dd') SHIP_TIME,TRADE_TERMS,CONTRACT_NO
+			,to_char(DELIVERY_PERIOD ,'yyyy-MM-dd') DELIVERY_PERIOD
+			,cp.CNUMBER,cp.PRODUCT_NO,cp.FACTORY_NAME
+			from CONTRACT_C  c
+			left join (select CONTRACT_ID,FACTORY_NAME,CNUMBER,PRODUCT_NO from CONTRACT_PRODUCT_C)cp 
+			on c.CONTRACT_ID = cp.CONTRACT_ID
+			where to_char(SHIP_TIME,'yyyy-MM')=#{outPutTime} 
+	</select>
+	
+</mapper>

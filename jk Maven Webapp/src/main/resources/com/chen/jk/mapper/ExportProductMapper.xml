@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chen.jk.mapper.ExportProductMapper">
+	<resultMap type="com.chen.jk.domain.ExportProduct" id="ExportProductRM">
+		<id property="id" column="EXPORT_PRODUCT_ID"/>
+		<result property="exportId" column="EXPORT_ID"/>
+		<result property="factoryId" column="FACTORY_ID"/>
+		<result property="factoryName" column="FACTORY_NAME"/>
+		<result property="productNo" column="PRODUCT_NO"/>
+		<result property="cNumber" column="CNUMBER"/>
+		<result property="packingUnit" column="PACKING_UNIT"/>
+		<result property="price" column="PRICE"/>
+		<result property="grossWeight" column="GROSS_WEIGHT"/>
+		<result property="netWeight" column="NET_WEIGHT"/>
+		<result property="sizeHeight" column="SIZE_HEIGHT"/>
+		<result property="sizeLength" column="SIZE_LENGTH"/>
+		<result property="sizeWidth" column="SIZE_WIDTH"/>
+		<result property="orderNo" column="ORDER_NO"/>
+		<result property="exPrice" column="EX_PRICE"/>
+		<result property="tax" column="TAX"/>
+		<result property="boxNum" column="BOX_NUM"/>
+		
+	</resultMap>
+	
+<select id="find" parameterType="map" resultMap="ExportProductRM">
+	SELECT * FROM EXPORT_PRODUCT_C WHERE 1=1
+	<if test="exportId!=null">
+	     and EXPORT_ID = #{exportId}
+	</if>
+</select>
+
+<select id="get" parameterType="String" resultMap="ExportProductRM">
+	SELECT * FROM EXPORT_PRODUCT_C WHERE EXPORT_PRODUCT_ID=#{id}
+</select>
+
+<insert id="insert" parameterType="com.chen.jk.domain.ExportProduct">
+	INSERT INTO EXPORT_PRODUCT_C (
+		EXPORT_PRODUCT_ID,EXPORT_ID,FACTORY_ID,
+		FACTORY_NAME,PRODUCT_NO,CNUMBER,PACKING_UNIT,
+		PRICE,GROSS_WEIGHT,NET_WEIGHT,SIZE_HEIGHT,
+		SIZE_LENGTH,SIZE_WIDTH,ORDER_NO,EX_PRICE,TAX,BOX_NUM
+		
+	)VALUES(
+	#{id},
+	#{exportId,jdbcType=VARCHAR},
+	#{factoryId,jdbcType=VARCHAR},
+	#{factoryName,jdbcType=VARCHAR},
+	#{productNo,jdbcType=VARCHAR},
+	#{cNumber,jdbcType=INTEGER},
+	#{packingUnit,jdbcType=VARCHAR},
+	#{price,jdbcType=DOUBLE},
+	#{grossWeight,jdbcType=DOUBLE},
+	#{netWeight,jdbcType=DOUBLE},
+	#{sizeHeight,jdbcType=DOUBLE},
+	#{sizeLength,jdbcType=DOUBLE},
+	#{sizeWidth,jdbcType=DOUBLE},
+	#{orderNo,jdbcType=DOUBLE},
+	#{exPrice,jdbcType=DOUBLE},
+	#{tax,jdbcType=DOUBLE},
+	#{boxNum,jdbcType=INTEGER}
+	)
+	
+</insert>
+
+
+<update id="update" parameterType="com.chen.jk.domain.ExportProduct">
+	UPDATE EXPORT_PRODUCT_C 
+	<set >
+			<if test= "exportId != null">EXPORT_ID=#{exportId}, </if>
+			<if test="factoryId != null">	FACTORY_ID = #{factoryId}, </if>
+			<if test="factoryName != null">FACTORY_NAME=#{factoryName}, </if>
+			<if test="productNo != null">PRODUCT_NO=#{productNo}, </if>
+			<if test="cNumber != null">CNUMBER=#{cNumber}, </if>
+			<if test="boxNum != null">BOX_NUM=#{boxNum}, </if>
+			<if test="packingUnit != null">PACKING_UNIT=#{packingUnit}, </if>
+			<if test="price != null">PRICE=#{price}, </if>
+			<if test="orderNo != null">ORDER_NO=#{orderNo}, </if>
+			<if test="grossWeight != null">GROSS_WEIGHT=#{grossWeight}, </if>
+			<if test="netWeight != null">NET_WEIGHT=#{netWeight}</if>
+			<if test="sizeHeight != null">SIZE_WEIGHT=#{sizeHeight}</if>
+			<if test="sizeWidth != null">SIZE_WIDTH=#{sizeWidth}</if>
+			<if test="sizeLength != null">SIZE_LENGTH=#{sizeLength}</if>
+			<if test="tax != null">PRODUCT_REQUEST=#{tax}</if>
+			<if test="exPrice != null">EX_PRICE=#{exPrice}</if>
+	</set>
+	 WHERE EXPORT_PRODUCT_ID=#{id}
+
+</update>
+<!-- 下面还未更新 更新请去掉该信息 -->
+
+<delete id="deleteById" parameterType="String">
+	DELETE FROM EXPORT_PRODUCT_C WHERE EXPORT_PRODUCT_ID=#{id}
+	
+</delete>
+
+<delete id="delete" parameterType="String">
+	DELETE FROM EXPORT_PRODUCT_C WHERE EXPORT_PRODUCT_ID
+	IN 
+	<foreach collection="array" item="id" open="(" close=")" separator=",">
+		#{id}
+	</foreach>
+	
+</delete>
+<!-- 通过货物的id删除附件 -->
+<delete id="deleteByContractProductId" parameterType="String">
+	DELETE FROM EXPORT_PRODUCT_C WHERE CONTRACT_PRODUCT_ID
+	IN
+	<foreach collection="array" item="contractProductId" open="(" close=")" separator=",">
+		#{contractProductId}
+	</foreach>
+</delete>
+
+<!-- 通过合同的id删除附件 -->
+<delete id="deleteByContractId" parameterType="String">
+	DELETE FROM EXPORT_PRODUCT_C  WHERE CONTRACT_PRODUCT_ID
+		IN (SELECT CONTRACT_PRODUCT_ID FROM CONTRACT_PRODUCT_C WHERE CONTRACT_ID
+		 IN
+	<foreach collection="array" item="contractId" open="(" close=")" separator=",">
+		#{contractId}
+	</foreach>	
+	)
+
+</delete>
+
+
+</mapper>

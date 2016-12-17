@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chen.jk.mapper.ExtEProductMapper">
+	<resultMap type="com.chen.jk.domain.ExtEProduct" id="ExtEProductRM">
+		<id property="id" column="EXT_EPRODUCT_ID"/>
+		<result property="exportProductId" column="EXPORT_PRODUCT_ID"/>
+		<result property="factoryId" column="FACTORY_ID"/>
+		<result property="factoryName" column="FACTORY_NAME"/>
+		<result property="productNo" column="PRODUCT_NO"/>
+		<result property="productImage" column="PRODUCT_IMAGE"/>
+		<result property="productDesc" column="PRODUCT_DESC"/>
+		<result property="cNumber" column="CNUMBER"/>
+		<result property="cType" column="CTYPE"/>
+		<result property="packingUnit" column="PACKING_UNIT"/>
+		<result property="price" column="PRICE"/>
+		<result property="amount" column="AMOUNT"/>
+		<result property="productRequest" column="PRODUCT_REQUEST"/>
+		<result property="orderNo" column="ORDER_NO"/>
+	</resultMap>
+	
+<select id="find" parameterType="map" resultMap="ExtEProductRM">
+	SELECT * FROM EXT_EPRODUCT_C WHERE 1=1
+	<if test="exportProductId !=null">
+	   and EXPORT_PRODUCT_ID= #{exportProductId}
+	</if>
+</select>
+
+<select id="get" parameterType="String" resultMap="ExtEProductRM">
+	SELECT * FROM EXT_EPRODUCT_C WHERE EXT_EPRODUCT_ID=#{id}
+</select>
+
+<insert id="insert" parameterType="com.chen.jk.domain.ExtEProduct">
+	INSERT INTO EXT_EPRODUCT_C (
+		EXT_CPRODUCT_ID,
+		EXPORT_PRODUCT_ID,
+		FACTORY_ID,
+		FACTORY_NAME,
+		PRODUCT_NO,
+		PRODUCT_IMAGE,
+		PRODUCT_DESC,
+		CNUMBER,
+		CTYPE,
+		PACKING_UNIT,
+		PRICE,
+		AMOUNT,
+		PRODUCT_REQUEST,
+		ORDER_NO
+		
+	)VALUES(
+	#{id},
+	#{contractProductId,jdbcType=VARCHAR},
+	#{factoryId,jdbcType=VARCHAR},
+	#{factoryName,jdbcType=VARCHAR},
+	#{productNo,jdbcType=VARCHAR},
+	#{productImage,jdbcType=VARCHAR},
+	#{productDesc,jdbcType=VARCHAR},
+	#{cNumber,jdbcType=INTEGER},
+	#{cType,jdbcType=INTEGER},
+	#{packingUnit,jdbcType=VARCHAR},
+	#{price,jdbcType=DOUBLE},
+	#{amount,jdbcType=DOUBLE},
+	#{productRequest,jdbcType=VARCHAR},
+	#{orderNo,jdbcType=INTEGER}
+	
+	
+	)
+	
+</insert>
+
+
+<update id="update" parameterType="com.chen.jk.domain.ExtEProduct">
+	UPDATE EXT_EPRODUCT_C 
+	<set >
+	
+			<if test="exportProductId != null">EXPORT_PRODUCT_ID=#{exportProductId}, </if>
+			<if test="factoryId != null">		FACTORY_ID = #{factoryId}, </if>
+			<if test="factoryName != null">FACTORY_NAME=#{factoryName}, </if>
+			<if test="productNo != null">PRODUCT_NO=#{productNo}, </if>
+			<if test="productImage != null">PRODUCT_IMAGE=#{productImage}, </if>
+			<if test="productDesc != null">PRODUCT_DESC=#{productDesc}, </if>
+			<if test="cNumber != null">CNUMBER=#{cNumber}, </if>
+			<if test="cType != null">CTYPE=#{cType}, </if>
+			<if test="packingUnit != null">PACKING_UNIT=#{packingUnit}, </if>
+			<if test="price != null">PRICE=#{price}, </if>
+			<if test="amount != null">AMOUNT=#{amount}, </if>
+			<if test="orderNo != null">ORDER_NO=#{orderNo}</if>
+			<if test="productRequest != null">PRODUCT_REQUEST=#{productRequest}</if>
+	</set>
+	 WHERE EXT_EPRODUCT_ID=#{id}
+
+</update>
+
+<!-- 下面还没有完全更新 更新之后请删除该消息 -->
+<delete id="deleteById" parameterType="String">
+	DELETE FROM EXT_EPRODUCT_C WHERE EXT_EPRODUCT_ID=#{id}
+	
+</delete>
+
+<delete id="delete" parameterType="String">
+	DELETE FROM EXT_EPRODUCT_C WHERE EXT_EPRODUCT_ID
+	IN 
+	<foreach collection="array" item="id" open="(" close=")" separator=",">
+		#{id}
+	</foreach>
+	
+</delete>
+<!-- 通过货物的id删除附件 -->
+<delete id="deleteByContractProductId" parameterType="String">
+	DELETE FROM EXT_EPRODUCT_C WHERE EXPORT_PRODUCT_ID
+	IN
+	<foreach collection="array" item="contractProductId" open="(" close=")" separator=",">
+		#{contractProductId}
+	</foreach>
+</delete>
+
+<!-- 通过报运的的id删除附件 还没完成 暂时不考虑 -->
+<delete id="deleteByContractId" parameterType="String">
+	DELETE FROM EXT_EPRODUCT_C  WHERE EXPORT_PRODUCT_ID
+		IN (SELECT EXPORT_PRODUCT_ID FROM CONTRACT_PRODUCT_C WHERE CONTRACT_ID
+		 IN
+	<foreach collection="array" item="contractId" open="(" close=")" separator=",">
+		#{contractId}
+	</foreach>	
+	)
+
+</delete>
+
+
+</mapper>
